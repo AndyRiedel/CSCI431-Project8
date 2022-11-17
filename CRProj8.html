@@ -223,9 +223,24 @@
       object.modelMatrix = modelMatrix;
       object.vertexBuffer = vertexBuffer;
  
+      var texture = gl.getAttribLocation(program, "textureCoord");
+      gl.vertexAttribPointer(texture, 2, gl.FLOAT, false, 0,0);//5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+      gl.enableVertexAttribArray(texture);
+      var tigerTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tigerTexture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById('createImage'));
+      gl.bindTexture(gl.TEXTURE_2D, null);
+
+      gl.bindTexture(gl.TEXTURE_2D, tigerTexture);
+      gl.activeTexture(gl.TEXTURE0);
+
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.useProgram(null);
- 
+      
       var scene = {
         program: program,
         object: object,
@@ -314,7 +329,7 @@
   </head>
   <body>
     <canvas id="rendering-surface" height="500" width="500"></canvas>
-    <img id="createImage" src="976707.jpg" width="0" height="0"></img>
+    <img id="createImage" src="matrix.jpg" width="0" height="0"></img>
     <form>
       <div>
         <label for="light-x">Light X<input type="range" name="light-x" id="light-x" min="0" max="100"></label>
