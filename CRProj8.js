@@ -66,14 +66,12 @@
         return program;
       }
        
-      function init(object) {
-   
-        var surface = document.getElementById('rendering-surface');
-        var gl = surface.getContext('experimental-webgl');
-        gl.viewport(0,0,surface.width,surface.height);
+      window.onload = function init() {
+        var object = loadMesh(tigerData);
+        var canvas = document.getElementById('gl-canvas');
+        var gl = canvas.getContext('experimental-webgl');
+        gl.viewport(0,0,canvas.width,canvas.height);
         gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.CULL_FACE);
-        gl.cullFace(gl.BACK);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
    
         var program = createProgram(
@@ -85,13 +83,14 @@
    
         program.positionAttribute = gl.getAttribLocation(program, 'pos');
         gl.enableVertexAttribArray(program.positionAttribute);
+        //get normal
         program.normalAttribute = gl.getAttribLocation(program, 'normal');
         gl.enableVertexAttribArray(program.normalAttribute);
    
         var vertexBuffer = gl.createBuffer();
-   
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, object.vertices, gl.STATIC_DRAW);
+        
         gl.vertexAttribPointer(
           program.positionAttribute, 3, gl.FLOAT, gl.FALSE, 
           Float32Array.BYTES_PER_ELEMENT * 6, 0);
@@ -102,7 +101,7 @@
    
         var projectionMatrix = mat4.create();
         mat4.perspective(
-          projectionMatrix, 0.75, surface.width/surface.height,
+          projectionMatrix, 0.75, canvas.width/canvas.height,
           0.1, 100);
         program.projectionMatrixUniform = gl.getUniformLocation(
           program, 'projectionMatrix');
@@ -194,9 +193,7 @@
           viewMatrix: viewMatrix
         };
    
-        requestAnimationFrame(function(timestamp) {
-          render(gl, scene, timestamp, 0);
-        });
+        requestAnimationFrame(function(timestamp) {render(gl, scene, timestamp, 0)});
       }
    
       function loadMesh(objectString) {
